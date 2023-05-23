@@ -60,10 +60,18 @@ def test_string_to_number():
     assert Item.string_to_number('5.5') == 5
 
 
-def test_test_string_to_number_value_error():
+def test_string_to_number_value_error():
     """Тестируем, что при попытке передать пустую строку
     или нечисловой символ возникает ошибка значения
     """
     with pytest.raises(ValueError):
         Item.string_to_number('')
         Item.string_to_number('a')
+
+
+def test_repr(item_tv):
+    assert repr(item_tv) == "Item('Телевизор', 50000, 10)"
+
+
+def test_str(item_tv):
+    assert str(item_tv) == 'Телевизор'
