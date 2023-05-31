@@ -70,3 +70,8 @@ class Item:
         number = int(float(string))
         return number
 
+    def __add__(self, other):
+        """Сложение экземпляров классов по количеству товара в магазине"""
+        if isinstance(other, self.__class__) or issubclass(other.__class__, self.__class__):
+            return self.quantity + other.quantity
+        return 'Объект не принадлежит к классу или не наследуется от класса'
