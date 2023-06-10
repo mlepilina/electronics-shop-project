@@ -7,6 +7,7 @@ class Item:
     """
     pay_rate = 1.0
     all = []
+    file_name = 'items.csv'
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
@@ -54,16 +55,30 @@ class Item:
         self.price *= self.pay_rate
 
     @classmethod
-    def instantiate_from_csv(cls):
+    def _instantiate_from_csv(cls):
         """Инициализируем экземпляры класса `Item` данными из файла"""
         cls.all = []
 
-        with open('../src/items.csv', newline='') as csvfile:
+        with open(f'../src/{cls.file_name}', newline='') as csvfile:
             reader = csv.DictReader(csvfile)
+
             for dicty in reader:
-                price_number = cls.string_to_number(dicty['price'])
-                quantity_number = cls.string_to_number(dicty['quantity'])
-                cls(dicty['name'], price_number, quantity_number)
+                if len(dicty) == 3:
+                    price_number = cls.string_to_number(dicty['price'])
+                    quantity_number = cls.string_to_number(dicty['quantity'])
+                    cls(dicty['name'], price_number, quantity_number)
+                else:
+                    raise InstantiateCSVError(f"Файл {cls.file_name} поврежден")
+
+    @classmethod
+    def instantiate_from_csv(cls):
+        """Инициализируем экземпляры класса `Item` данными из файла"""
+        try:
+            cls._instantiate_from_csv()
+        except FileNotFoundError:
+            print(f'FileNotFoundError: Отсутствует файл {cls.file_name}')
+        except InstantiateCSVError as exc:
+            print(exc)
 
     @staticmethod
     def string_to_number(string):
@@ -75,3 +90,13 @@ class Item:
         if isinstance(other, self.__class__) or issubclass(other.__class__, self.__class__):
             return self.quantity + other.quantity
         return 'Объект не принадлежит к классу или не наследуется от класса'
+
+
+class InstantiateCSVError(Exception):
+
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return f"{self.__class__.__name__}: {self.message}"
+

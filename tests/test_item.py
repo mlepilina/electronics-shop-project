@@ -1,6 +1,6 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
 import pytest
-from src.item import Item
+from src.item import Item, InstantiateCSVError
 from src.phone import Phone
 
 Item.pay_rate = 0.8
@@ -87,3 +87,13 @@ def test_add(item_tv, phone_1):
     """Тестируем метод, который выполняет сложение количества товара в магазине"""
     assert item_tv + phone_1 == item_tv.quantity + phone_1.quantity
 
+
+def test__instantiate_from_csv():
+    """Тестируем обработку исключений"""
+
+    with pytest.raises(FileNotFoundError):
+        Item.file_name = 'ddd'
+        Item._instantiate_from_csv()
+    with pytest.raises(InstantiateCSVError):
+        Item.file_name = 'items_broken.csv'
+        Item._instantiate_from_csv()
